@@ -3,7 +3,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chiralit��t Erkennungs-Spiel</title>
+  <title>Chiralität Erkennungs-Spiel</title>
   <script src="/_sdk/element_sdk.js"></script>
   <style>
     body {
@@ -317,12 +317,12 @@
     const defaultConfig = {
       game_title: "Chiralität Erkennungs-Spiel",
       phase1_instruction: "Ist dieses Molekül chiral (hat ein Chiralitätszentrum) oder achiral?",
-      phase2_instruction_enantiomers: "Diese beiden Moleküle sind Enantiomere (Spiegelbildisomere). Versuche sie durch Drehen oder Spiegeln zur Deckung zu bringen!",
+      phase2_instruction_enantiomers: "Diese beiden Moleküle sind Enantiomere (Spiegelbildisomere). Versuche sie durch Drehen zur Deckung zu bringen!",
       phase2_instruction_identical: "Diese beiden Darstellungen zeigen das gleiche Molekül. Bringe sie durch Transformationen zur Deckung!",
       chiral_button: "Chiral",
       achiral_button: "Achiral",
-      rotate_button: "↻ Drehen",
-      mirror_button: "🪞 An Oberfläche spiegeln",
+      rotate_button_1: "🔄 Drehen 1",
+      rotate_button_2: "↻ Drehen 2",
       primary_color: "#667eea",
       secondary_color: "#764ba2",
       success_color: "#48bb78"
@@ -332,8 +332,8 @@
       phase: 1,
       currentMolecule: null,
       userAnswer: null,
-      moleculeA: { rotated: false, mirrored: false },
-      moleculeB: { rotated: false, mirrored: false }
+      moleculeA: { rotation1: false, rotation2: false },
+      moleculeB: { rotation1: false, rotation2: false }
     };
 
     // Chirale Moleküle mit 4 unterschiedlichen Substituenten
@@ -344,10 +344,10 @@
         isChiral: true,
         center: { x: 175, y: 160 },
         groups: [
-          { name: "OH", pos: "top", color: "#e53e3e" },
-          { name: "H", pos: "front", color: "#cbd5e0" },
-          { name: "CH3", pos: "left", color: "#2d3748" },
-          { name: "C2H5", pos: "right", color: "#2d3748" }
+          { name: "OH", pos: "top", color: "#e53e3e", hasDashed: true, hasWedge: false },
+          { name: "H", pos: "front", color: "#cbd5e0", hasDashed: false, hasWedge: true },
+          { name: "CH3", pos: "left", color: "#2d3748", hasDashed: false, hasWedge: false },
+          { name: "C2H5", pos: "right", color: "#2d3748", hasDashed: false, hasWedge: false }
         ]
       },
       // Bromchlorfluormethan (chiral)
@@ -356,10 +356,10 @@
         isChiral: true,
         center: { x: 175, y: 160 },
         groups: [
-          { name: "Br", pos: "top", color: "#9c4221" },
-          { name: "H", pos: "front", color: "#cbd5e0" },
-          { name: "Cl", pos: "left", color: "#38a169" },
-          { name: "F", pos: "right", color: "#5a67d8" }
+          { name: "Br", pos: "top", color: "#9c4221", hasDashed: true, hasWedge: false },
+          { name: "H", pos: "front", color: "#cbd5e0", hasDashed: false, hasWedge: true },
+          { name: "Cl", pos: "left", color: "#38a169", hasDashed: false, hasWedge: false },
+          { name: "F", pos: "right", color: "#5a67d8", hasDashed: false, hasWedge: false }
         ]
       },
       // Milchsäure (chiral)
@@ -368,10 +368,10 @@
         isChiral: true,
         center: { x: 175, y: 160 },
         groups: [
-          { name: "OH", pos: "top", color: "#e53e3e" },
-          { name: "H", pos: "front", color: "#cbd5e0" },
-          { name: "CH3", pos: "left", color: "#2d3748" },
-          { name: "COOH", pos: "right", color: "#d69e2e" }
+          { name: "OH", pos: "top", color: "#e53e3e", hasDashed: true, hasWedge: false },
+          { name: "H", pos: "front", color: "#cbd5e0", hasDashed: false, hasWedge: true },
+          { name: "CH3", pos: "left", color: "#2d3748", hasDashed: false, hasWedge: false },
+          { name: "COOH", pos: "right", color: "#d69e2e", hasDashed: false, hasWedge: false }
         ]
       },
       // Propan (achiral - zwei gleiche H)
@@ -380,10 +380,10 @@
         isChiral: false,
         center: { x: 175, y: 160 },
         groups: [
-          { name: "H", pos: "top", color: "#cbd5e0" },
-          { name: "H", pos: "front", color: "#cbd5e0" },
-          { name: "CH3", pos: "left", color: "#2d3748" },
-          { name: "CH3", pos: "right", color: "#2d3748" }
+          { name: "H", pos: "top", color: "#cbd5e0", hasDashed: true, hasWedge: false },
+          { name: "H", pos: "front", color: "#cbd5e0", hasDashed: false, hasWedge: true },
+          { name: "CH3", pos: "left", color: "#2d3748", hasDashed: false, hasWedge: false },
+          { name: "CH3", pos: "right", color: "#2d3748", hasDashed: false, hasWedge: false }
         ]
       },
       // 2,2-Dichlorpropan (achiral - zwei gleiche Cl)
@@ -392,15 +392,15 @@
         isChiral: false,
         center: { x: 175, y: 160 },
         groups: [
-          { name: "Cl", pos: "top", color: "#38a169" },
-          { name: "Cl", pos: "front", color: "#38a169" },
-          { name: "CH3", pos: "left", color: "#2d3748" },
-          { name: "CH3", pos: "right", color: "#2d3748" }
+          { name: "Cl", pos: "top", color: "#38a169", hasDashed: true, hasWedge: false },
+          { name: "Cl", pos: "front", color: "#38a169", hasDashed: false, hasWedge: true },
+          { name: "CH3", pos: "left", color: "#2d3748", hasDashed: false, hasWedge: false },
+          { name: "CH3", pos: "right", color: "#2d3748", hasDashed: false, hasWedge: false }
         ]
       }
     ];
 
-    function createTetrahedralMolecule(groups, rotated, mirrored) {
+    function createTetrahedralMolecule(groups) {
       // Positionen für tetraedrische Geometrie
       const positions = {
         top: { x: 175, y: 90, bond: { x1: 175, y1: 160, x2: 175, y2: 100 } },
@@ -409,37 +409,13 @@
         right: { x: 250, y: 160, bond: { x1: 175, y1: 160, x2: 240, y2: 160 } }
       };
 
-      let groupArray = [...groups];
-
-      // Transformationen anwenden
-      if (rotated) {
-        // 180° Drehung: vorne ↔ hinten, links ↔ rechts
-        const temp = [...groupArray];
-        groupArray = groupArray.map(g => {
-          if (g.pos === 'top') return { ...temp.find(x => x.pos === 'front'), pos: 'top' };
-          if (g.pos === 'front') return { ...temp.find(x => x.pos === 'top'), pos: 'front' };
-          if (g.pos === 'left') return { ...temp.find(x => x.pos === 'right'), pos: 'left' };
-          if (g.pos === 'right') return { ...temp.find(x => x.pos === 'left'), pos: 'right' };
-          return g;
-        });
-      }
-
-      if (mirrored) {
-        // Spiegelung an Oberfläche: oben ↔ unten (front ↔ top), Keilstrich wechselt Position
-        const temp = [...groupArray];
-        groupArray = groupArray.map(g => {
-          if (g.pos === 'top') return { ...temp.find(x => x.pos === 'front'), pos: 'top' };
-          if (g.pos === 'front') return { ...temp.find(x => x.pos === 'top'), pos: 'front' };
-          return g;
-        });
-      }
-
       let svg = '<svg width="350" height="320" viewBox="0 0 350 320">';
       
-      // Zeichne Bindungen
-      groupArray.forEach(group => {
+      // Zeichne Bindungen - Keilstrich ist an die Gruppe geklebt, nicht an Position!
+      groups.forEach(group => {
         const pos = positions[group.pos];
-        const bondType = group.pos === 'front' ? 'wedge' : group.pos === 'top' ? 'dashed' : 'normal';
+        // Der Keilstrich "klebt" an der Gruppe mit dem Attribut hasWedge
+        const bondType = group.hasWedge ? 'wedge' : group.hasDashed ? 'dashed' : 'normal';
         
         if (bondType === 'wedge') {
           // Keilbindung (kommt aus der Ebene heraus)
@@ -461,10 +437,10 @@
       svg += `<circle cx="175" cy="160" r="16" fill="#444444" stroke="#222" stroke-width="2"/>`;
       svg += `<text x="175" y="167" font-size="18" font-weight="bold" fill="white" text-anchor="middle">C</text>`;
 
-      // Zeichne Substituenten (top ist unter der Oberfläche - gestrichelt)
-      groupArray.forEach(group => {
+      // Zeichne Substituenten (dashed macht halbtransparent)
+      groups.forEach(group => {
         const pos = positions[group.pos];
-        const isBelowSurface = group.pos === 'top';
+        const isBelowSurface = group.hasDashed;
         svg += createSubstituent(group.name, pos.x, pos.y, group.color, isBelowSurface);
       });
 
@@ -482,7 +458,6 @@
       let opacity = 1;
       if (isBelowSurface) {
         opacity = 0.5;
-        // Mache Farbe heller durch Mischen mit weiß
         fillColor = lightenColor(color);
       }
       
@@ -510,25 +485,45 @@
       return sortedA === sortedB;
     }
 
-    function applyTransformations(groups, rotated, mirrored) {
-      let result = [...groups];
+    function applyTransformations(groups, rotation1, rotation2) {
+      let result = groups.map(g => ({...g}));
 
-      if (rotated) {
+      // Drehen 1: links ↔ rechts tauschen, oben/unten bleiben aber Keilstrich wechselt
+      if (rotation1) {
+        const temp = result.map(g => ({...g}));
         result = result.map(g => {
-          if (g.pos === 'top') return { ...result.find(x => x.pos === 'front'), pos: 'top' };
-          if (g.pos === 'front') return { ...result.find(x => x.pos === 'top'), pos: 'front' };
-          if (g.pos === 'left') return { ...result.find(x => x.pos === 'right'), pos: 'left' };
-          if (g.pos === 'right') return { ...result.find(x => x.pos === 'left'), pos: 'right' };
+          // links/rechts tauschen
+          if (g.pos === 'left') return { ...temp.find(x => x.pos === 'right'), pos: 'left' };
+          if (g.pos === 'right') return { ...temp.find(x => x.pos === 'left'), pos: 'right' };
+          // oben/unten: Gruppen bleiben, aber Keilstrich wechselt (top ↔ front)
+          if (g.pos === 'top') return { ...temp.find(x => x.pos === 'front'), pos: 'top' };
+          if (g.pos === 'front') return { ...temp.find(x => x.pos === 'top'), pos: 'front' };
           return g;
         });
       }
 
-      if (mirrored) {
-        // Spiegelung an Oberfläche: oben ↔ unten
-        const temp = [...result];
+      // Drehen 2: links↔rechts UND oben↔unten tauschen - Keilstrich wandert MIT der Gruppe!
+      if (rotation2) {
+        const temp = result.map(g => ({...g}));
         result = result.map(g => {
-          if (g.pos === 'top') return { ...temp.find(x => x.pos === 'front'), pos: 'top' };
-          if (g.pos === 'front') return { ...temp.find(x => x.pos === 'top'), pos: 'front' };
+          // links/rechts tauschen (nur Position)
+          if (g.pos === 'left') {
+            const rightGroup = temp.find(x => x.pos === 'right');
+            return { ...rightGroup, pos: 'left' };
+          }
+          if (g.pos === 'right') {
+            const leftGroup = temp.find(x => x.pos === 'left');
+            return { ...leftGroup, pos: 'right' };
+          }
+          // oben/unten tauschen - Gruppe wandert MIT ihrem hasWedge/hasDashed!
+          if (g.pos === 'top') {
+            const frontGroup = temp.find(x => x.pos === 'front');
+            return { ...frontGroup, pos: 'top' };
+          }
+          if (g.pos === 'front') {
+            const topGroup = temp.find(x => x.pos === 'top');
+            return { ...topGroup, pos: 'front' };
+          }
           return g;
         });
       }
@@ -549,7 +544,7 @@
         <div class="molecule-section">
           <div class="molecule-title">${gameState.currentMolecule.name}</div>
           <div class="molecule-display">
-            ${createTetrahedralMolecule(gameState.currentMolecule.groups, false, false)}
+            ${createTetrahedralMolecule(gameState.currentMolecule.groups)}
           </div>
           <div class="answer-buttons">
             <button class="answer-btn" onclick="checkAnswer(true)">
@@ -593,18 +588,29 @@
 
     function showPhase2() {
       gameState.phase = 2;
-      gameState.moleculeA = { rotated: false, mirrored: false };
-      gameState.moleculeB = { rotated: false, mirrored: false };
+      gameState.moleculeA = { rotation1: false, rotation2: false };
+      gameState.moleculeB = { rotation1: false, rotation2: false };
       
       document.getElementById('phase-indicator').textContent = 'Phase 2: Deckungsgleichheit testen';
       
       const contentArea = document.getElementById('content-area');
       
-      // Für chirale Moleküle: Enantiomer erstellen (an Oberfläche gespiegelt - oben ↔ unten)
-      // Für achirale: gleiche Orientierung (nur gedreht)
-      const moleculeBGroups = gameState.currentMolecule.isChiral ? 
-        applyTransformations(gameState.currentMolecule.groups, false, true) :
-        applyTransformations(gameState.currentMolecule.groups, true, false);
+      // Molekül B: Nur die vertikalen Gruppen (oben/unten) tauschen
+      // Links und rechts bleiben identisch!
+      const moleculeBGroups = gameState.currentMolecule.groups.map(g => {
+        if (g.pos === 'top') {
+          // Top-Gruppe geht nach front
+          const frontGroup = gameState.currentMolecule.groups.find(x => x.pos === 'front');
+          return { ...frontGroup, pos: 'top' };
+        }
+        if (g.pos === 'front') {
+          // Front-Gruppe geht nach top
+          const topGroup = gameState.currentMolecule.groups.find(x => x.pos === 'top');
+          return { ...topGroup, pos: 'front' };
+        }
+        // left und right bleiben unverändert
+        return { ...g };
+      });
       
       window.moleculeBOriginal = moleculeBGroups;
       
@@ -624,14 +630,14 @@
             <div class="comparison-molecule">
               <div class="comparison-label">Molekül A</div>
               <div class="comparison-display" id="molecule-a-display">
-                ${createTetrahedralMolecule(gameState.currentMolecule.groups, false, false)}
+                ${createTetrahedralMolecule(gameState.currentMolecule.groups)}
               </div>
               <div class="transform-buttons">
-                <button class="transform-btn" onclick="transformMoleculeA('rotate')">
-                  ${defaultConfig.rotate_button}
+                <button class="transform-btn" onclick="transformMoleculeA('rotation1')">
+                  ${defaultConfig.rotate_button_1}
                 </button>
-                <button class="transform-btn" onclick="transformMoleculeA('mirror')">
-                  ${defaultConfig.mirror_button}
+                <button class="transform-btn" onclick="transformMoleculeA('rotation2')">
+                  ${defaultConfig.rotate_button_2}
                 </button>
                 <button class="transform-btn" onclick="resetMoleculeA()" style="background: #e53e3e;">
                   Zurücksetzen
@@ -642,14 +648,14 @@
             <div class="comparison-molecule">
               <div class="comparison-label">Molekül B</div>
               <div class="comparison-display" id="molecule-b-display">
-                ${createTetrahedralMolecule(moleculeBGroups, false, false)}
+                ${createTetrahedralMolecule(moleculeBGroups)}
               </div>
               <div class="transform-buttons">
-                <button class="transform-btn" onclick="transformMoleculeB('rotate')">
-                  ${defaultConfig.rotate_button}
+                <button class="transform-btn" onclick="transformMoleculeB('rotation1')">
+                  ${defaultConfig.rotate_button_1}
                 </button>
-                <button class="transform-btn" onclick="transformMoleculeB('mirror')">
-                  ${defaultConfig.mirror_button}
+                <button class="transform-btn" onclick="transformMoleculeB('rotation2')">
+                  ${defaultConfig.rotate_button_2}
                 </button>
                 <button class="transform-btn" onclick="resetMoleculeB()" style="background: #e53e3e;">
                   Zurücksetzen
@@ -665,7 +671,11 @@
             <p>
               ${gameState.currentMolecule.isChiral ? 
                 'Enantiomere sind Spiegelbildisomere, die sich NICHT zur Deckung bringen lassen - sie sind wie linke und rechte Hand!' :
-                'Achirale Moleküle lassen sich durch Drehung und Spiegelung zur Deckung bringen.'}
+                'Achirale Moleküle lassen sich durch Drehung zur Deckung bringen.'}
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">
+              <strong>Drehen 1:</strong> Links ↔ Rechts tauschen, Keilstrich wechselt (oben ↔ unten)<br>
+              <strong>Drehen 2:</strong> ALLE Positionen tauschen (links↔rechts + oben↔unten) - Keilstrich wandert MIT!
             </p>
             <button class="continue-btn" onclick="showPhase1()">
               Neues Molekül
@@ -683,29 +693,29 @@
       
       if (!svg) return;
       
-      if (type === 'rotate') {
-        gameState.moleculeA.rotated = !gameState.moleculeA.rotated;
+      if (type === 'rotation1') {
+        gameState.moleculeA.rotation1 = !gameState.moleculeA.rotation1;
         svg.classList.add('rotating');
-      } else if (type === 'mirror') {
-        gameState.moleculeA.mirrored = !gameState.moleculeA.mirrored;
+      } else if (type === 'rotation2') {
+        gameState.moleculeA.rotation2 = !gameState.moleculeA.rotation2;
         svg.classList.add('flipping');
       }
       
       setTimeout(() => {
         const transformed = applyTransformations(
           gameState.currentMolecule.groups,
-          gameState.moleculeA.rotated,
-          gameState.moleculeA.mirrored
+          gameState.moleculeA.rotation1,
+          gameState.moleculeA.rotation2
         );
-        display.innerHTML = createTetrahedralMolecule(transformed, false, false);
+        display.innerHTML = createTetrahedralMolecule(transformed);
         checkSuperposition();
       }, 800);
     }
 
     function resetMoleculeA() {
-      gameState.moleculeA = { rotated: false, mirrored: false };
+      gameState.moleculeA = { rotation1: false, rotation2: false };
       document.getElementById('molecule-a-display').innerHTML = 
-        createTetrahedralMolecule(gameState.currentMolecule.groups, false, false);
+        createTetrahedralMolecule(gameState.currentMolecule.groups);
       checkSuperposition();
     }
 
@@ -715,53 +725,52 @@
       
       if (!svg) return;
       
-      if (type === 'rotate') {
-        gameState.moleculeB.rotated = !gameState.moleculeB.rotated;
+      if (type === 'rotation1') {
+        gameState.moleculeB.rotation1 = !gameState.moleculeB.rotation1;
         svg.classList.add('rotating');
-      } else if (type === 'mirror') {
-        gameState.moleculeB.mirrored = !gameState.moleculeB.mirrored;
+      } else if (type === 'rotation2') {
+        gameState.moleculeB.rotation2 = !gameState.moleculeB.rotation2;
         svg.classList.add('flipping');
       }
       
       setTimeout(() => {
         const transformed = applyTransformations(
           window.moleculeBOriginal,
-          gameState.moleculeB.rotated,
-          gameState.moleculeB.mirrored
+          gameState.moleculeB.rotation1,
+          gameState.moleculeB.rotation2
         );
-        display.innerHTML = createTetrahedralMolecule(transformed, false, false);
+        display.innerHTML = createTetrahedralMolecule(transformed);
         checkSuperposition();
       }, 800);
     }
 
     function resetMoleculeB() {
-      gameState.moleculeB = { rotated: false, mirrored: false };
+      gameState.moleculeB = { rotation1: false, rotation2: false };
       document.getElementById('molecule-b-display').innerHTML = 
-        createTetrahedralMolecule(window.moleculeBOriginal, false, false);
+        createTetrahedralMolecule(window.moleculeBOriginal);
       checkSuperposition();
     }
 
     function checkSuperposition() {
       const transformedA = applyTransformations(
         gameState.currentMolecule.groups,
-        gameState.moleculeA.rotated,
-        gameState.moleculeA.mirrored
+        gameState.moleculeA.rotation1,
+        gameState.moleculeA.rotation2
       );
       
       const transformedB = applyTransformations(
         window.moleculeBOriginal,
-        gameState.moleculeB.rotated,
-        gameState.moleculeB.mirrored
+        gameState.moleculeB.rotation1,
+        gameState.moleculeB.rotation2
       );
       
       const resultArea = document.getElementById('result-area');
       
       if (areIdentical(transformedA, transformedB)) {
         if (gameState.currentMolecule.isChiral) {
-          // Bei chiralen Molekülen sollten Enantiomere NICHT deckungsgleich sein
           resultArea.innerHTML = `
             <div class="feedback" style="background: #fed7d7; border: 3px solid #f56565; color: #742a2a;">
-              <h3>⚠️ Achtung!</h3>
+              <h3>��️ Achtung!</h3>
               <p>Du hast die Moleküle zur Deckung gebracht, aber das sollte bei echten Enantiomeren eigentlich nicht möglich sein. Enantiomere sind Spiegelbildisomere, die sich wie linke und rechte Hand verhalten!</p>
             </div>
           `;
@@ -859,5 +868,5 @@
 
     showPhase1();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a6cc35ad29e6e5c',t:'MTc2NDUzMTA2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a6d18b0a7c26e5c',t:'MTc2NDUzNDU2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
